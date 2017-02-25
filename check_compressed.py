@@ -2,7 +2,7 @@
     File name      : check_compressed.py
     Author         : Jinwook Jung
     Created on     : Fri Feb 24 20:16:50 2017
-    Last modified  : 2017-02-24 20:16:50
+    Last modified  : 2017-02-24 20:22:49
     Python version : 
 '''
 
