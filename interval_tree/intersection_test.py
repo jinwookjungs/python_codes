@@ -2,13 +2,44 @@
     File name      : intersection_test.py
     Author         : Jinwook Jung
     Created on     : Fri Feb 24 20:27:42 2017
-    Last modified  : 2017-02-25 22:29:37
+    Last modified  : 2017-02-26 00:30:29
     Python version : 
 '''
 
 import sys
 from intervaltree import Interval, IntervalTree
 from copy import deepcopy
+from functools import total_ordering
+
+
+@total_ordering
+class Rectangle(object):
+    """ Determines a rectangle shape. """
+    def __init__(self, llx, lly, urx, ury):
+        self.llx, self.lly = llx, lly
+        self.urx, self.ury = urx, ury
+
+    @property
+    def width(self):
+        return self.urx - self.llx
+
+
+    @property
+    def height(self):
+        return self.ury - self.lly
+
+
+    @property
+    def area(self):
+        return self.width * self.height
+
+    
+    def __eq__(self, other):
+        return (self.llx, self.lly, self.urx, self.ury) \
+                == (other.llx, other.lly, other.urx, other.ury)
+
+    def __lt__(self, other):
+        return self.area < other.area
 
 
 class PinReach(object):
@@ -71,12 +102,20 @@ class Node(object):
         except KeyError as ke:
             sys.stderr.write("%r" % ke)
             sys.stderr.write("\n")
-   
+
+    def get_area(self):
+        try:
+            return (self.urx-self.llx) * (self.ury-self.lly)
+        except TypeError:
+            return 0 
+
 
     def __str__(self):
         name = '/'.join([s.name for s in self.sink_dict.values()])
-        return "%s llx=%r lly=%r urx=%r ury=%r" \
-                % (name, self.llx, self.lly, self.urx, self.ury)
+        area = self.get_area()
+    
+        return "%s (%r, %r) (%r, %r) area=%r" \
+                % (name, self.llx, self.lly, self.urx, self.ury, area)
 
 
     def __hash__(self):
@@ -109,7 +148,11 @@ class NodeSet(object):
     def get_nodes_by_sink_name(self, name):
         """ Return nodes associated with the sink. """
         return [v for v in self.node_set if name in v.sink_dict.keys()]
-                
+
+
+    def __iter__(self):
+        return iter(self.node_set)
+
 
 class Checker(object):
     def __init__(self):
@@ -119,9 +162,8 @@ class Checker(object):
         self.T_x = IntervalTree()
         self.T_y = IntervalTree()
 
-        self.level = Level()
-
         self.x_bounds, self.y_bounds = list(), list()
+        self.solution = None
 
 
     def read_input(self, file_name):
@@ -185,13 +227,13 @@ class Checker(object):
             self.T_x[s.llx:s.urx] = s
             self.T_y[s.lly:s.ury] = s
 
-        print("Interval tree")
-        for i in self.T_x:
-            print(i)
-        print("")
-        for i in self.T_y:
-            print(i)
-        print("")
+#        print("Interval tree")
+#        for i in self.T_x:
+#            print(i)
+#        print("")
+#        for i in self.T_y:
+#            print(i)
+#        print("")
 
     
     def generate_nodes(self):
@@ -263,7 +305,7 @@ class Checker(object):
 
         # Check
         print("Done X-direction")
-        [print(n) for n in Nx.node_set]
+        [print(n) for n in Nx]
         print("")
 
         #---------------------------------------
@@ -334,7 +376,44 @@ class Checker(object):
             Ny.add_node(n)
 
         print("")
-        [print("\t%s" % (n)) for n in Ny.node_set]
+        [print("\t%s" % (n)) for n in Ny]
+
+        self.solution = Ny
+
+
+    def plot_solution(self):
+        import matplotlib.cm as cm
+        import matplotlib.pyplot as plt
+        from matplotlib.collections import PatchCollection
+        from matplotlib.patches import Rectangle
+        from numpy import array as np_array
+
+        patches = list()
+        areas = list()
+        
+        x_max, y_max = 0,0
+
+        for n in self.solution.node_set:
+            x,y = n.llx, n.lly
+            w,h = n.urx-n.llx, n.ury-n.lly
+            rectangle = Rectangle((x,y), w, h)
+            patches.append(rectangle)
+            areas.append(n.get_area())
+
+            x_max = n.urx if n.urx > x_max else x_max
+            y_max = n.ury if n.ury > y_max else y_max
+
+        fig = plt.figure()
+        ax = fig.add_subplot(111)
+        col = PatchCollection(patches, alpha=0.4)
+        col.set(array=np_array(areas), cmap='jet')
+
+        ax.add_collection(col)
+        ax.set_xlim([0,x_max])
+        ax.set_ylim([0,y_max])
+        plt.colorbar(col)
+
+        fig.savefig('test.png')
 
 
 if __name__ == '__main__':
@@ -349,4 +428,5 @@ if __name__ == '__main__':
     checker.initialize_interval_trees()
 
     checker.generate_nodes()
+    checker.plot_solution()
 
