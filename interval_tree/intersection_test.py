@@ -11,6 +11,7 @@ from intervaltree import Interval, IntervalTree
 from copy import deepcopy
 from functools import total_ordering
 from collections import OrderedDict
+from itertools import count as iter_count
 
 
 @total_ordering
@@ -27,7 +28,7 @@ class Rectangle(object):
     @property
     def height(self):
         return self.ury-self.lly
-
+    
     @property
     def area(self):
         return self.width * self.height
@@ -44,7 +45,7 @@ class Rectangle(object):
 
 
 @total_ordering
-class PinReach(object):
+class SinkReach(object):
     def __init__(self, name, llx, lly, urx, ury):
         """ A pin reach. """
         self.name = name
@@ -75,7 +76,7 @@ class PinReach(object):
         return self.ury-self.lly
 
     def __repr__(self):
-        return 'PinReach({0.name!r}, {0.bbox!r})'.format(self)
+        return 'SinkReach({0.name!r}, {0.bbox!r})'.format(self)
 
     def __str__(self):
         return "%s: (%d,%d), (%d,%d)" \
@@ -93,7 +94,7 @@ class PinReach(object):
 
 class Bound(object):
     def __init__(self, sinks, coord, direction='l'):
-        """ lower/upper bound of a pin reach. """
+        """ lower/upper bound of a sink reach. """
         self.sinks = sinks      # A set of sinks
         self.coord = coord
         self.direction = direction      # 'l' or 'r'
@@ -116,7 +117,8 @@ class Bound(object):
 class BoundPool(object):
     def __init__(self):
         """ A set of bounds. """
-        self.bound_dict = dict()    # Key: (coord, 'l'/'r'), Value: sink list
+        self.bound_dict = dict()    # Key: a tuple (coord, 'l'/'r'), 
+                                    # Value: a list of sinks
 
     def add_bound(self, sink, coord, direction='l'):
         print("\t%s - %d - %s" % (sink, coord, direction))
@@ -139,22 +141,26 @@ class BoundPool(object):
 
 
 class Node(Rectangle):
+    id_generator = iter_count(0)
     def __init__(self, sink_set, llx):
         self.sink_dict = {s.name : s for s in sink_set}
 
         self.llx, self.urx = llx, None
         self.lly, self.ury = None, None
+
+        self.id = next(Node.id_generator)
     
     def add_sink(self, s):
         self.sink_dict[s.name] = s
     
     def remove_sink_by_name(self, name_set):
-        try:
-            for name in name_set:
+        for name in name_set:
+            try:
                 del self.sink_dict[name]
-        except KeyError as ke:
-            sys.stderr.write("(E in Node) %r" % ke)
-            sys.stderr.write("\n")
+            except KeyError as ke:
+                pass
+#                sys.stderr.write("(E in Node) %r" % ke)
+#                sys.stderr.write("\n")
 
     @property
     def area(self):
@@ -163,25 +169,31 @@ class Node(Rectangle):
         except TypeError:
             return 0 
 
+    @property
+    def sink_name_list(self):
+        return sorted(list(self.sink_dict.keys()))
+
+    @property
+    def name(self):
+        return '/'.join(self.sink_name_list)
+
     def __repr__(self):
-        name = '/'.join([s.name for s in self.sink_dict.values()])
-    
         return "%s (%r, %r) (%r, %r) area=%r" \
-                % (name, self.llx, self.lly, self.urx, self.ury, self.area)
+                % (self.name, self.llx, self.lly, self.urx, self.ury, self.area)
 
     def __str__(self):
-        name = '/'.join([s.name for s in self.sink_dict.values()])
-    
         return "%s (%r, %r) (%r, %r) area=%r" \
-                % (name, self.llx, self.lly, self.urx, self.ury, self.area)
+                % (self.name, self.llx, self.lly, self.urx, self.ury, self.area)
 
     def __hash__(self):
-        names = ''.join(self.sink_dict.keys())
-        return hash(names)
+        return hash(self.name)
 
     def __eq__(self, other):
         return self.__hash__() == other.__hash__()
-    
+
+    def __len__(self):
+        return len(self.sink_dict)
+
     def __iter__(self):
         return iter(self.sink_dict.values())
 
@@ -202,12 +214,13 @@ class NodePool(object):
 
     def get_nodes_by_sink_name(self, name):
         """ Return nodes associated with the sink. """
-        print(name)
-        for v in self.node_set:
-            print(set(v.sink_dict.keys()))
-            print(name.intersection(set(v.sink_dict.keys())))
-        print("")
-        return [v for v in self.node_set if len(name.intersection(set(v.sink_dict.keys())))!=0]
+#        print(name)
+#        for v in self.node_set:
+#            print(set(v.sink_dict.keys()))
+#            print(name.intersection(set(v.sink_dict.keys())))
+#        print("")
+        return [v for v in self.node_set \
+                if len(name.intersection(set(v.sink_dict.keys())))!=0]
 
     def get_nodes_sorted(self):
         return sorted(self.node_set, 
@@ -244,13 +257,13 @@ class Checker(object):
             tokens = line.split()
             name = tokens[0]
             llx, lly, urx, ury = [int(t) for t in tokens[1:]]
-            self.sinks.append(PinReach(name, llx, lly, urx, ury))
+            self.sinks.append(SinkReach(name, llx, lly, urx, ury))
 
         # Set source
         tokens = lines[-1].split()
         name = tokens[0]
         llx, lly, urx, ury = [int(t) for t in tokens[1:]]
-        self.source = PinReach(name, llx, lly, urx, ury)
+        self.source = SinkReach(name, llx, lly, urx, ury)
 
         # Identify all the bounds of sinks
         src_llx, src_lly = self.source.llx, self.source.lly
@@ -322,7 +335,6 @@ class Checker(object):
             n = Node(crossed, self.source.llx)
             active_nodes.add_node(n)
 
-            print(n)
         print("")
 
         # Now, start searching toward x-direction
@@ -330,8 +342,6 @@ class Checker(object):
             if b.is_left is False:
                 # We meet the right boundary of a sink now.
                 # Find the active nodes having the sink.
-                print("NAME:")
-                print(b.name)
                 nodes = active_nodes.get_nodes_by_sink_name(b.sink_name_set)
 
                 for n in nodes:
@@ -377,6 +387,7 @@ class Checker(object):
         #---------------------------------------
         # Y-direction
         #---------------------------------------
+        print("Search toward y-direction")
         crossed_sink_names = list()
         active_nodes = NodePool()
         Ny = NodePool()
@@ -397,18 +408,16 @@ class Checker(object):
         # 1. Search toward y-direction
         for b in self.y_bounds.get_sorted_bounds():
             print(b)
-            print(b.sink_name_set)
             if b.is_left is False:  
+                print(b.is_left)
                 # We meet the right boundary of a sink.
                 # Close every node having the sink.
                 nodes = active_nodes.get_nodes_by_sink_name(b.sink_name_set)
-                print(nodes)
 
                 for n in nodes:
-                    print(n)
+                    print("\t%r" % (n))
                     n_new = deepcopy(n)
                     n_new.remove_sink_by_name(b.sink_name_set)
-                    print(n_new)
 
                     if len(n_new.sink_dict) != 0:
                         active_nodes.add_node(n_new)
@@ -417,28 +426,31 @@ class Checker(object):
                     n.ury = b.coord
                     Ny.add_node(n)
 
-                # Remove the sink as well in the nodes not inactivted currently
+                # Remove the sink in the nodes not inactivted currently too
                 nodes = Nx.get_nodes_by_sink_name(b.sink_name_set)
                 for n in nodes:
-                    n.sink_dict = {k:v for k,v in n.sink_dict.items() 
+                    new_dict = {k:v for k,v in n.sink_dict.items() 
                                        if k != b.name}
 
                     # If the inactive node no more has sink, remove it.
-                    if len(n.sink_dict) == 0:
+                    if len(new_dict) == 0:
                         Nx.remove_node(n)
 
             else:
+                print(b.is_left)
                 # We meet the left boundary of a sink
                 # Brings inactive nodes
                 crossed_sink_names = list()
-
+                
                 for i in self.T_y[b.coord]:
                     crossed_sink_names.append(i.data.name)
 
+                print(crossed_sink_names)
                 for n in Nx:
                     names = set(n.sink_dict.keys())
-                    if names.issubset(crossed_sink_names):
-                        n.lly = self.source.lly
+                    print(names.issubset(crossed_sink_names))
+                    if names.issubset(crossed_sink_names) and n.lly is None:
+                        n.lly = b.coord
                         active_nodes.add_node(n)
 
         #2. Close all the active nodes
@@ -451,8 +463,32 @@ class Checker(object):
         [print("\t%s" % (n)) for n in self.nodes]
 
     def select_nodes(self):
+        import heapq
+
+        selected = list()
         sink_names = {s.name for s in self.sinks}
-        candidates = []
+        candidates = deepcopy(self.nodes)
+
+        # Priority: #sinks, area. 
+        # If they are the same, use the one created earlir.
+        heap = [(-len(n), -n.area, n.id, n) for n in candidates]
+
+        while len(sink_names) > 0:
+            heapq.heapify(heap)
+
+            selected.append(heapq.heappop(heap)[-1])
+            print(selected[-1])
+
+            sink_covered = selected[-1].sink_name_list
+            sink_names = set(sink_names) - set(sink_covered)
+            
+            candidates = list()
+            for n in heap:
+                n[-1].remove_sink_by_name(sink_covered)
+                if len(n) > 0:
+                    candidates.append(n[-1])
+
+            heap = [(-len(n), -n.area, n.id, n) for n in candidates]
 
     def plot_generated_nodes(self):
         import matplotlib.cm as cm
@@ -520,5 +556,6 @@ if __name__ == '__main__':
     checker.initialize_interval_trees()
 
     checker.generate_nodes()
+    print("")
     checker.select_nodes()
     checker.plot_generated_nodes()
