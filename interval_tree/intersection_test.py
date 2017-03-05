@@ -98,7 +98,7 @@ class Bound(object):
         self.sinks = sinks      # A set of sinks
         self.coord = coord
         self.direction = direction      # 'l' or 'r'
-        self.name = '/'.join([s.name for s in sinks])
+        self.name = ' && '.join([s.name for s in sinks])
 
     @property
     def is_left(self):
@@ -175,7 +175,7 @@ class Node(Rectangle):
 
     @property
     def name(self):
-        return '/'.join(self.sink_name_list)
+        return ' && '.join(self.sink_name_list)
 
     def __repr__(self):
         return "%s (%r, %r) (%r, %r) area=%r" \
