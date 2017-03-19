@@ -2,7 +2,7 @@
     File name      : intersection_test.py
     Author         : Jinwook Jung
     Created on     : Fri Feb 24 20:27:42 2017
-    Last modified  : 2017-02-27 12:10:56
+    Last modified  : 2017-03-18 21:00:42
     Python version : 
 '''
 
@@ -15,12 +15,13 @@ from itertools import count as iter_count
 
 
 @total_ordering
-class Rectangle(object):
-    """ Determines a rectangle shape. """
-    def __init__(self, llx, lly, urx, ury):
+class SinkReach(object):
+    ''' A sink pin reach. '''
+    def __init__(self, name, llx, lly, urx, ury):
+        self.name = name
         self.llx, self.lly = llx, lly
         self.urx, self.ury = urx, ury
-
+    
     @property
     def width(self):
         return self.urx-self.llx
@@ -28,81 +29,46 @@ class Rectangle(object):
     @property
     def height(self):
         return self.ury-self.lly
-    
+
     @property
     def area(self):
         return self.width * self.height
-   
-    def __repr__(self):
-        return 'Rectangle({0.llx!r}, {0.lly!r}, {0.urx!r}, {0.ury!r})'.format(self)
-
-    def __eq__(self, other):
-        return (self.llx, self.lly, self.urx, self.ury) \
-                == (other.llx, other.lly, other.urx, other.ury)
-
-    def __lt__(self, other):
-        return self.area < other.area
-
-
-@total_ordering
-class SinkReach(object):
-    def __init__(self, name, llx, lly, urx, ury):
-        """ A pin reach. """
-        self.name = name
-        self.bbox = Rectangle(llx, lly, urx, ury)
-    
-    @property
-    def llx(self):
-        return self.bbox.llx
-
-    @property
-    def lly(self):
-        return self.bbox.lly
-
-    @property
-    def urx(self):
-        return self.bbox.urx
-
-    @property
-    def ury(self):
-        return self.bbox.ury
-
-    @property
-    def width(self):
-        return self.urx-self.llx
-
-    @property
-    def height(self):
-        return self.ury-self.lly
 
     def __repr__(self):
-        return 'SinkReach({0.name!r}, {0.bbox!r})'.format(self)
-
-    def __str__(self):
-        return "%s: (%d,%d), (%d,%d)" \
+        return "SinkReach(name=%r, box={(%r,%r), (%r,%r)}" \
                 % (self.name, self.llx, self.lly, self.urx, self.ury)
 
+    __str__ = __repr__
+
     def __eq__(self, other):
-        return self.name == other.name and self.bbox == other.bbox
+        # TODO: A sink can have only one sink reach, since we are assuming
+        # only one layer trait is used. So equality is checked by only using
+        # the name of sinks currently.
+        return self.name == other.name
     
     def __lt__(self, other):
-        return self.bbox < other.bbox
+        return self.area < other.area
 
     def __hash__(self):
         return hash(self.name)
 
 
 class Bound(object):
-    def __init__(self, sinks, coord, direction='l'):
-        """ lower/upper bound of a sink reach. """
-        self.sinks = sinks      # A set of sinks
+    ''' Lower/upper bound of a sink reach either in x-axis or in y-axis (So, 
+    a sink reach has 4 bounds; lower and upper bounds in x-axis, and 
+    corresponding bounds in y-axis. This bounds are used to identify partitions
+    using interval trees.
+    '''
+    def __init__(self, sinks, coord, bound_type='lower'):
+        self.sinks = sinks              # A set of sinks
         self.coord = coord
-        self.direction = direction      # 'l' or 'r'
+        self.bound_type= bound_type     # 'lower' or 'upper'
         self.name = ' && '.join([s.name for s in sinks])
 
     @property
-    def is_left(self):
-        return True if self.direction == 'l' else False
+    def is_lower_bound(self):
+        ''' Return true if this bound is a lower bound. '''
+        return True if self.bound_type == 'lower' else False
 
     @property
     def sink_name_set(self):
@@ -116,20 +82,27 @@ class Bound(object):
 
 class BoundPool(object):
     def __init__(self):
-        """ A set of bounds. """
-        self.bound_dict = dict()    # Key: a tuple (coord, 'l'/'r'), 
+        ''' A set of bounds. We will keep two kinds of bound pool, one for 
+        x-axis and the other for y-axis.
+        '''
+        self.bound_dict = dict()    # Key: a tuple (coord, 'lower'/'upper')
                                     # Value: a list of sinks
 
-    def add_bound(self, sink, coord, direction='l'):
-        print("\t%s - %d - %s" % (sink, coord, direction))
-        assert direction in ('l', 'r')
-        try:
-            self.bound_dict[coord,direction].append(sink)
-        except KeyError:
-            self.bound_dict[coord,direction] = list()
-            self.bound_dict[coord,direction].append(sink)
+    def add_bound(self, sink, coord, bound_type='lower'):
+        print("\t%s - %d - %s" % (sink, coord, bound_type))
+        assert bound_type in ('lower', 'upper')
+        
+        dict_key = (coord, bound_type)
+        if dict_key not in bound_dict:
+            self.bound_dict[dict_key] = list()
+
+        self.bound_dict[dict_key].append(sink)
 
     def get_sorted_bounds(self):
+        ''' Return a list of bounds, sorted in ascending order of coordinate.
+        If there are multiple bounds having the same coordinate, lower bound 
+        will come first in the list.
+        '''
         d = OrderedDict(sorted(self.bound_dict.items(), key=lambda t:t[0]))
         return [Bound(v,k[0],k[1]) for k,v in d.items()]
 
@@ -140,7 +113,11 @@ class BoundPool(object):
         return iter(self.bound_dict.items())
 
 
-class Node(Rectangle):
+class Node(object):
+    ''' This class represents a node in a topology search graph. Each node has 
+    a unique id, a list of sinks (essentially a map), and bounding box of its
+    movable region.
+    '''
     id_generator = iter_count(0)
     def __init__(self, sink_set, llx):
         self.sink_dict = {s.name : s for s in sink_set}
@@ -155,12 +132,10 @@ class Node(Rectangle):
     
     def remove_sink_by_name(self, name_set):
         for name in name_set:
-            try:
+            if name in self.sink_dict:
                 del self.sink_dict[name]
-            except KeyError as ke:
-                pass
-#                sys.stderr.write("(E in Node) %r" % ke)
-#                sys.stderr.write("\n")
+            else:
+                pass  # the sink is not included in this node.
 
     @property
     def area(self):
@@ -175,15 +150,13 @@ class Node(Rectangle):
 
     @property
     def name(self):
-        return ' && '.join(self.sink_name_list)
+        return '&&'.join(self.sink_name_list)
 
     def __repr__(self):
-        return "%s (%r, %r) (%r, %r) area=%r" \
+        return "Node(name=%r, box={(%r,%r), (%r,%r)}, area=%r" \
                 % (self.name, self.llx, self.lly, self.urx, self.ury, self.area)
 
-    def __str__(self):
-        return "%s (%r, %r) (%r, %r) area=%r" \
-                % (self.name, self.llx, self.lly, self.urx, self.ury, self.area)
+    __str__ == __repr__
 
     def __hash__(self):
         return hash(self.name)
@@ -195,13 +168,15 @@ class Node(Rectangle):
         return len(self.sink_dict)
 
     def __iter__(self):
+        # return iter(self.sink_dict.items())
         return iter(self.sink_dict.values())
 
 
 class NodePool(object):
+    ''' A set of nodes. '''
     def __init__(self):
         self.node_set = set()
-       
+
     def add_node(self, n):
         self.node_set.add(n)
 
@@ -213,12 +188,7 @@ class NodePool(object):
             sys.stderr.write("\n")
 
     def get_nodes_by_sink_name(self, name):
-        """ Return nodes associated with the sink. """
-#        print(name)
-#        for v in self.node_set:
-#            print(set(v.sink_dict.keys()))
-#            print(name.intersection(set(v.sink_dict.keys())))
-#        print("")
+        ''' Return the nodes containing the given sink. '''
         return [v for v in self.node_set \
                 if len(name.intersection(set(v.sink_dict.keys())))!=0]
 
@@ -231,7 +201,7 @@ class NodePool(object):
         return iter(self.node_set)
 
 
-class Checker(object):
+class Partitioner(object):
     def __init__(self):
         self.source = None
         self.sinks = list()
@@ -256,13 +226,13 @@ class Checker(object):
 
             tokens = line.split()
             name = tokens[0]
-            llx, lly, urx, ury = [int(t) for t in tokens[1:]]
+            llx, lly, urx, ury = [float(t) for t in tokens[1:]]
             self.sinks.append(SinkReach(name, llx, lly, urx, ury))
 
         # Set source
         tokens = lines[-1].split()
         name = tokens[0]
-        llx, lly, urx, ury = [int(t) for t in tokens[1:]]
+        llx, lly, urx, ury = [float(t) for t in tokens[1:]]
         self.source = SinkReach(name, llx, lly, urx, ury)
 
         # Identify all the bounds of sinks
@@ -275,18 +245,18 @@ class Checker(object):
             # on the right of the source
             print("%r - X" % (s))
             if s.llx > src_llx and s.llx < src_urx:
-                self.x_bounds.add_bound(s, s.llx, 'l')
+                self.x_bounds.add_bound(s, s.llx, 'lower')
 
             if s.urx > src_llx and s.urx < src_urx:
-                self.x_bounds.add_bound(s, s.urx, 'r')
+                self.x_bounds.add_bound(s, s.urx, 'upper')
 
             # Y bounds
             print("%r - Y" % (s))
             if s.lly > src_lly and s.lly < src_ury:
-                self.y_bounds.add_bound(s, s.lly, 'l')
+                self.y_bounds.add_bound(s, s.lly, 'lower')
 
             if s.ury > src_lly and s.ury < src_ury:
-                self.y_bounds.add_bound(s, s.ury, 'r')
+                self.y_bounds.add_bound(s, s.ury, 'upper')
                
         print("")
         print("#Sinks : %d" % len(self.sinks))
@@ -339,6 +309,7 @@ class Checker(object):
 
         # Now, start searching toward x-direction
         for b in self.x_bounds.get_sorted_bounds():
+            print(b)
             if b.is_left is False:
                 # We meet the right boundary of a sink now.
                 # Find the active nodes having the sink.
@@ -361,7 +332,9 @@ class Checker(object):
                 # We meet the left boundary of a sink now.
                 # Create the copies for active nodes and update their llx.
                 new_nodes = list()
+
                 for n in active_nodes.node_set:
+                    print(n)
                     n_new = deepcopy(n)
                     [n_new.add_sink(s) for s in b.sinks]
                     n_new.llx = b.coord
@@ -469,6 +442,8 @@ class Checker(object):
         sink_names = {s.name for s in self.sinks}
         candidates = deepcopy(self.nodes)
 
+        print("Num candidates: %d" % (len(candidates)))
+
         # Priority: #sinks, area. 
         # If they are the same, use the one created earlir.
         heap = [(-len(n), -n.area, n.id, n) for n in candidates]
@@ -551,11 +526,12 @@ if __name__ == '__main__':
     parser.add_argument('-i', action='store', dest='src', required=True)
     opt = parser.parse_args()
 
-    checker = Checker()
-    checker.read_input(opt.src)
-    checker.initialize_interval_trees()
+    partitioner = Partitioner()
+    partitioner.read_input(opt.src)
+    partitioner.initialize_interval_trees()
 
-    checker.generate_nodes()
+    partitioner.generate_nodes()
     print("")
-    checker.select_nodes()
-    checker.plot_generated_nodes()
+    partitioner.select_nodes()
+    partitioner.plot_generated_nodes()
+
