@@ -12,6 +12,7 @@ from copy import deepcopy
 from functools import total_ordering
 from collections import OrderedDict
 from itertools import count as iter_count
+from itertools import product as iter_product
 
 
 @total_ordering
@@ -179,12 +180,19 @@ class Node:
         return sorted(list(self.sink_dict.keys()))
 
     @property
+    def sink_set(self):
+        return set(self.sink_dict.values())
+
+    @property
     def name(self):
         return '&&'.join(self.sink_name_list)
 
     def __repr__(self):
-        return "Node(name=%r, box={(%r,%r), (%r,%r)}, area=%r" \
-                % (self.name, self.llx, self.lly, self.urx, self.ury, self.area)
+        try:
+            return "Node(name=%r, box={(%r,%r), (%r,%r)}, area=%r" \
+                    % (self.name, self.llx, self.lly, self.urx, self.ury, self.area)
+        except TypeError:
+            return "Node(name=%r)" % (self.name)
 
     __str__ = __repr__
 
@@ -317,34 +325,43 @@ class Partitioner:
         Nx = self.find_node_candidates(self.T_x, self.x_bounds, 
                                        self.source.llx, self.source.urx)
 
+        for n in Nx:
+            print(n)
+        print("")
+
         # Y-direction
         print("Searching toward y-direction.")
         Ny = self.find_node_candidates(self.T_y, self.y_bounds, 
                                        self.source.lly, self.source.ury)
+        for n in Ny:
+            print(n)
+        print("")
 
         # Final node set
-        N = NodeSet()
-        for s in self.sinks:
-            Nx_sub = Nx.get_nodes_by_sink(s)
-            Ny_sub = Ny.get_nodes_by_sink(s)
+        self.nodes = NodeSet()
 
-            N_new = Nx_sub.intersection(Ny_sub)
-            N_new = {deepcopy(n) for n in N_new}
-            N = N.union(N_new)
+        remaining = set(self.sinks)
+        
+        for nx, ny in iter_product(Nx, Ny):
+            sinks_nx = nx.sink_set
+            sinks_ny = ny.sink_set
 
-            # Remove s from Nx and Ny
-            Nx.remove_sink_from_nodes(s)
-            Ny.remove_sink_from_nodes(s)
-           
+            sinks_new = sinks_nx.intersection(sinks_ny)
+            # if sinks_new in [sinks_nx, sinks_ny]:
+            if len(sinks_new) > 0:
+                node_new = Node(sinks_new)
+                self.nodes.add(node_new)
+                
+                remaining = remaining - sinks_new
+
         # Update movable region for each node
-        [n.update_movable_region(self.source) for n in N]
-        print("%d nodes are found (N^2=%d).\n" % (len(N), len(self.sinks)**2))
+        [n.update_movable_region(self.source) for n in self.nodes]
+        print("%d nodes are found (N^2=%d).\n" \
+              % (len(self.nodes), len(self.sinks)**2))
 
-        self.nodes = N
-
-        if __debug__:
-            print("All the generated nodes:")
-            [print("\t%d : %s" % (i+1, n)) for i,n in enumerate(N)]
+        # if __debug__:
+        print("All the generated nodes:")
+        [print("\t%d : %s" % (i+1, n)) for i,n in enumerate(self.nodes)]
 
     def select_nodes(self):
         import heapq
@@ -354,7 +371,7 @@ class Partitioner:
 
         selected = list()
         sink_names = {s.name for s in self.sinks}
-        candidates = deepcopy(self.nodes)
+        candidates = {deepcopy(n) for n in self.nodes}
 
         print("Num candidates: %d" % (len(candidates)))
 
