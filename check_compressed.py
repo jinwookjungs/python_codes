@@ -2,14 +2,14 @@
     File name      : check_compressed.py
     Author         : Jinwook Jung
     Created on     : Fri Feb 24 20:16:50 2017
-    Last modified  : 2017-02-24 20:22:49
+    Last modified  : 2017-04-11 18:22:49
     Python version : 
 '''
 
 def get_file_type(file_name):
     signature_dict = { "\x1f\x8b\x08" : "gz",
                        "\x42\x5a\x68" : "bz2" }
-   
+    
     with open(file_name) as f:
         file_head = f.read(3)
 
