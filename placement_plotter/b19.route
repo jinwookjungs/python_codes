@@ -1,0 +1,63 @@
+route 1.0
+
+Grid               : 148 148 6
+VerticalCapacity   : 0 6 0 28 0 28
+HorizontalCapacity : 6 0 28 0 28 0
+MinWireWidth       : 1 1 1 1 1 1
+MinWireSpacing     : 1 1 1 1 1 1
+ViaSpacing         : 1 1 1 1 1 1
+GridOrigin         : 0 0
+TileSize           : 30 30
+BlockagePorosity   : 0
+
+NumNiTerminals : 47
+
+             bs      1
+           hold      1
+        in1_10_      1
+         in1_1_      1
+         in1_2_      1
+         in1_3_      1
+         in1_4_      1
+         in1_5_      1
+         in1_6_      1
+         in1_7_      1
+         in1_8_      1
+         in1_9_      1
+        in2_10_      1
+         in2_3_      1
+         in2_4_      1
+         in2_5_      1
+         in2_6_      1
+         in2_7_      1
+         in2_8_      1
+         in2_9_      1
+      iccad_clk      1
+             na      1
+         ris_0_      1
+        ris_10_      1
+        ris_11_      1
+        ris_12_      1
+        ris_13_      1
+        ris_14_      1
+        ris_15_      1
+        ris_16_      1
+        ris_17_      1
+        ris_18_      1
+        ris_19_      1
+         ris_1_      1
+        ris_20_      1
+        ris_21_      1
+        ris_22_      1
+        ris_23_      1
+        ris_29_      1
+         ris_2_      1
+         ris_3_      1
+         ris_4_      1
+         ris_5_      1
+         ris_6_      1
+         ris_7_      1
+         ris_8_      1
+         ris_9_      1
+
+NumBlockageNodes : 0

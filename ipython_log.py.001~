@@ -1,0 +1,42 @@
+# IPython log file
+
+get_ipython().magic('logstrart')
+get_ipython().magic('logstart')
+import matplotlib.pyplot as plt
+improt numpy as np
+import numpy as np
+from numpy.random import randn
+fig = plt.figure()
+fig
+ax1 = fig.add_subplot,2,1)
+ax1 = fig.add_subplot(2,2,1)
+ax2 = fig.add_subplot(2,2,2)
+ax3 = fig.add_subplot(2,2,3)
+plt.plot(randn(50).cumsum(), 'k--')
+ax4 = fig.add_subplot(2,2,4)
+ax4.plot(randn(50), 'k-')
+_ = ax1.hist(randn(100), bins=20, color='k', alpha=0.3)
+ax2.scatter(np.arange(30), np.arange(30)+3*randn(30))
+fig, axes = plt.subplots(2,3)
+axes
+axes[0][0].plot(randn(100).cumsum())
+axes[0][1].plot(randn(100).cumsum())
+axes[0][2].plot(randn(100).cumsum())
+axes[1][2].plot(randn(100).cumsum())
+fig3, axes3 = plt.subplots(2, 2, sharex=True, sharey=True)
+for i in range(2):
+    for j in range(2):
+        axes[i, j].hist(randn(500), bins=50, color='k', alpha=0.5)
+        
+for i in range(2):
+    for j in range(2):
+        axes3[i, j].hist(randn(500), bins=50, color='k', alpha=0.5)
+        
+plt.subplots_adjust(wspace=0, hspace=0)
+plt.subplots_adjust(wspace=0, hspace=0)
+fig.subplots_adjust(wspace=0, hspace=0)
+fig3.plot(randn(30).cumsum(), 'ko--')
+axes3[0][0].plot(randn(30).cumsum(), 'ko--')
+plt.plot(randn(30).cumsum(), 'ko--')
+plt.xlim([0,10])
+exit()

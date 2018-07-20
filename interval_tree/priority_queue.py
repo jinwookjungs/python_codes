@@ -19,3 +19,35 @@ class PriorityQueue:
 
     def pop(self):
         return heapq.heappop(self._queue)[-1]
+
+    def remove_item_by_name(self, name):
+        print(set(self._queue))
+        print(set(self._queue).remove(Item(name)))
+
+
+if __name__ == '__main__':
+    class Item:
+        def __init__(self, name):
+            self.name = name
+
+        def __repr__(self):
+            return 'Item({!r})'.format(self.name)
+
+        def __eq__(self, other):
+            return self.name == other.name
+
+        def __hash__(self):
+            return hash(self.name)
+
+    q = PriorityQueue()
+    q.push(Item('foo'), 1) 
+    q.push(Item('bar'), 5) 
+    q.push(Item('spam'), 4) 
+    q.push(Item('grok'), 1) 
+
+    q.remove_item_by_name('foo')
+
+    print(q.pop())
+    print(q.pop())
+    print(q.pop())
+

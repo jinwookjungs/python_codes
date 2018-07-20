@@ -1,0 +1,99 @@
+Generating bounds.
+SinkReach('s1', Rectangle(10.0, 20.0, 30.0, 50.0)) - X
+	s1: (10,20), (30,50) - 10 - l
+	s1: (10,20), (30,50) - 30 - r
+SinkReach('s1', Rectangle(10.0, 20.0, 30.0, 50.0)) - Y
+	s1: (10,20), (30,50) - 20 - l
+	s1: (10,20), (30,50) - 50 - r
+SinkReach('s2', Rectangle(11.0, 30.0, 30.0, 60.0)) - X
+	s2: (11,30), (30,60) - 11 - l
+	s2: (11,30), (30,60) - 30 - r
+SinkReach('s2', Rectangle(11.0, 30.0, 30.0, 60.0)) - Y
+	s2: (11,30), (30,60) - 30 - l
+	s2: (11,30), (30,60) - 60 - r
+SinkReach('s3', Rectangle(12.0, 40.0, 30.0, 70.0)) - X
+	s3: (12,40), (30,70) - 12 - l
+	s3: (12,40), (30,70) - 30 - r
+SinkReach('s3', Rectangle(12.0, 40.0, 30.0, 70.0)) - Y
+	s3: (12,40), (30,70) - 40 - l
+	s3: (12,40), (30,70) - 70 - r
+
+#Sinks : 3
+#Bounds : 4/6
+
+Bound (s1, 10 Left)
+Bound (s2, 11 Left)
+Bound (s3, 12 Left)
+Bound (s1 && s2 && s3, 30 Right)
+
+Bound (s1, 20 Left)
+Bound (s2, 30 Left)
+Bound (s3, 40 Left)
+Bound (s1, 50 Right)
+Bound (s2, 60 Right)
+Bound (s3, 70 Right)
+
+-------------------------------------------------------------------------------
+Generating nodes.
+-------------------------------------------------------------------------------
+First nodes:
+
+Bound (s1, 10 Left)
+Bound (s2, 11 Left)
+s1 (10.0, None) (None, None) area=0
+Bound (s3, 12 Left)
+s1/s2 (11.0, None) (None, None) area=0
+s1 (10.0, None) (None, None) area=0
+Bound (s1 && s2 && s3, 30 Right)
+Done X-direction
+s1/s3 (12.0, None) (30.0, None) area=0
+s1/s2 (11.0, None) (30.0, None) area=0
+s1 (10.0, None) (30.0, None) area=0
+s1/s2/s3 (12.0, None) (30.0, None) area=0
+
+Search toward y-direction
+Bound (s1, 20 Left)
+True
+['s1']
+False
+False
+True
+False
+Bound (s2, 30 Left)
+True
+['s1', 's2']
+False
+True
+True
+False
+Bound (s3, 40 Left)
+True
+['s1', 's3', 's2']
+True
+True
+True
+True
+Bound (s1, 50 Right)
+False
+	s1/s3 (12.0, 40.0) (30.0, None) area=0
+	s1/s2 (11.0, 30.0) (30.0, None) area=0
+	s1 (10.0, 20.0) (30.0, None) area=0
+	s1/s2/s3 (12.0, 40.0) (30.0, None) area=0
+Bound (s2, 60 Right)
+False
+	s2 (11.0, 30.0) (30.0, None) area=0
+	s2/s3 (12.0, 40.0) (30.0, None) area=0
+Bound (s3, 70 Right)
+False
+	s3 (12.0, 40.0) (30.0, None) area=0
+
+	s1/s2/s3 (12.0, 40.0) (30.0, 50.0) area=180.0
+	s1/s2 (11.0, 30.0) (30.0, 50.0) area=380.0
+	s2/s3 (12.0, 40.0) (30.0, 60.0) area=360.0
+	s1/s3 (12.0, 40.0) (30.0, 50.0) area=180.0
+	s1 (10.0, 20.0) (30.0, 50.0) area=600.0
+	s2 (11.0, 30.0) (30.0, 60.0) area=570.0
+	s3 (12.0, 40.0) (30.0, 70.0) area=540.0
+
+Num candidates: 7
+s1/s2/s3 (12.0, 40.0) (30.0, 50.0) area=180.0

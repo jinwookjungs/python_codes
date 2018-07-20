@@ -1,0 +1,167 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+Bound	intersection_test.py	/^class Bound(object):$/;"	c
+Checker	intersection_test.py	/^class Checker(object):$/;"	c
+Interval	intersection_test.py	/^from intervaltree import Interval, IntervalTree$/;"	i
+Interval	interval.py	/^class Interval(namedtuple('IntervalBase', ['begin', 'end', 'data'])):$/;"	c
+Interval	intervaltree.py	/^from interval import Interval$/;"	i
+IntervalTree	intersection_test.py	/^from intervaltree import Interval, IntervalTree$/;"	i
+IntervalTree	intervaltree.py	/^class IntervalTree(collections.MutableSet):$/;"	c
+Level	intersection_test.py	/^class Level(object):$/;"	c
+Node	intersection_test.py	/^class Node(object):$/;"	c
+Node	intervaltree.py	/^from node import Node$/;"	i
+Node	node.py	/^class Node(object):$/;"	c
+Number	interval.py	/^from numbers import Number$/;"	i
+Number	intervaltree.py	/^from numbers import Number$/;"	i
+PriorityQueue	priority_queue.py	/^class PriorityQueue: $/;"	c
+Rectangle	intersection_test.py	/^class Rectangle(object):$/;"	c
+SortedDict	intervaltree.py	/^from sortedcontainers import SortedDict$/;"	i
+__cmp__	interval.py	/^    def __cmp__(self, other):$/;"	m	class:Interval	file:
+__contains__	intervaltree.py	/^    def __contains__(self, item):$/;"	m	class:IntervalTree	file:
+__delitem__	intervaltree.py	/^    def __delitem__(self, point):$/;"	m	class:IntervalTree	file:
+__eq__	interval.py	/^    def __eq__(self, other):$/;"	m	class:Interval	file:
+__eq__	intervaltree.py	/^    def __eq__(self, other):$/;"	m	class:IntervalTree	file:
+__getitem__	intervaltree.py	/^    def __getitem__(self, index):$/;"	m	class:IntervalTree	file:
+__getitem__	node.py	/^    def __getitem__(self, index):$/;"	m	class:Node	file:
+__gt__	interval.py	/^    def __gt__(self, other):$/;"	m	class:Interval	file:
+__hash__	interval.py	/^    def __hash__(self):$/;"	m	class:Interval	file:
+__init__	intersection_test.py	/^    def __init__(self):$/;"	m	class:Checker
+__init__	intersection_test.py	/^    def __init__(self):$/;"	m	class:Level
+__init__	intersection_test.py	/^    def __init__(self):$/;"	m	class:Node
+__init__	intersection_test.py	/^    def __init__(self, name, llx, lly, urx, ury):$/;"	m	class:Rectangle
+__init__	intersection_test.py	/^    def __init__(self, sink, coord, is_left=True):$/;"	m	class:Bound
+__init__	intervaltree.py	/^    def __init__(self, intervals=None):$/;"	m	class:IntervalTree
+__init__	node.py	/^    def __init__(self,$/;"	m	class:Node
+__init__	priority_queue.py	/^    def __init__(self):$/;"	m	class:PriorityQueue
+__iter__	intervaltree.py	/^    def __iter__(self):$/;"	m	class:IntervalTree	file:
+__len__	intervaltree.py	/^    def __len__(self):$/;"	m	class:IntervalTree	file:
+__lt__	interval.py	/^    def __lt__(self, other):$/;"	m	class:Interval	file:
+__new__	interval.py	/^    def __new__(cls, begin, end, data=None):$/;"	m	class:Interval	file:
+__reduce__	interval.py	/^    def __reduce__(self):$/;"	m	class:Interval	file:
+__reduce__	intervaltree.py	/^    def __reduce__(self):$/;"	m	class:IntervalTree	file:
+__repr__	interval.py	/^    def __repr__(self):$/;"	m	class:Interval	file:
+__repr__	intervaltree.py	/^    def __repr__(self):$/;"	m	class:IntervalTree	file:
+__setitem__	intervaltree.py	/^    def __setitem__(self, index, value):$/;"	m	class:IntervalTree	file:
+__setitem__	node.py	/^    def __setitem__(self, key, value):$/;"	m	class:Node	file:
+__slots__	interval.py	/^    __slots__ = ()  # Saves memory, avoiding the need to create __dict__ for each interval$/;"	v	class:Interval
+__str__	intersection_test.py	/^    def __str__(self):$/;"	m	class:Bound	file:
+__str__	intersection_test.py	/^    def __str__(self):$/;"	m	class:Node	file:
+__str__	intersection_test.py	/^    def __str__(self):$/;"	m	class:Rectangle	file:
+__str__	interval.py	/^    __str__ = __repr__$/;"	v	class:Interval
+__str__	intervaltree.py	/^    __str__ = __repr__$/;"	v	class:IntervalTree
+__str__	node.py	/^    def __str__(self):$/;"	m	class:Node	file:
+_add_boundaries	intervaltree.py	/^    def _add_boundaries(self, interval):$/;"	m	class:IntervalTree
+_get_fields	interval.py	/^    def _get_fields(self):$/;"	m	class:Interval
+_raise_if_null	interval.py	/^    def _raise_if_null(self, other):$/;"	m	class:Interval
+_remove_boundaries	intervaltree.py	/^    def _remove_boundaries(self, interval):$/;"	m	class:IntervalTree
+add	intervaltree.py	/^    def add(self, interval):$/;"	m	class:IntervalTree
+add	node.py	/^    def add(self, interval):$/;"	m	class:Node
+add_if_nested	intervaltree.py	/^        def add_if_nested():$/;"	f	function:IntervalTree.find_nested
+addi	intervaltree.py	/^    def addi(self, begin, end, data=None):$/;"	m	class:IntervalTree
+all_children	node.py	/^    def all_children(self):$/;"	m	class:Node
+all_children_helper	node.py	/^    def all_children_helper(self, result):$/;"	m	class:Node
+append	intervaltree.py	/^    append = add$/;"	v	class:IntervalTree
+appendi	intervaltree.py	/^    appendi = addi$/;"	v	class:IntervalTree
+argparse	intersection_test.py	/^    import argparse$/;"	i
+attrgetter	node.py	/^from operator import attrgetter$/;"	i
+begin	intervaltree.py	/^    def begin(self):$/;"	m	class:IntervalTree
+center_hit	node.py	/^    def center_hit(self, interval):$/;"	m	class:Node
+checker	intersection_test.py	/^    checker = Checker()$/;"	v	class:Checker
+chop	intervaltree.py	/^    def chop(self, begin, end, datafunc=None):$/;"	m	class:IntervalTree
+clear	intervaltree.py	/^    def clear(self):$/;"	m	class:IntervalTree
+collections	intervaltree.py	/^import collections$/;"	i
+compute_depth	node.py	/^    def compute_depth(self):$/;"	m	class:Node
+contains_interval	interval.py	/^    def contains_interval(self, other):$/;"	m	class:Interval
+contains_point	interval.py	/^    def contains_point(self, p):$/;"	m	class:Interval
+contains_point	node.py	/^    def contains_point(self, p):$/;"	m	class:Node
+containsi	intervaltree.py	/^    def containsi(self, begin, end, data=None):$/;"	m	class:IntervalTree
+copy	interval.py	/^    def copy(self):$/;"	m	class:Interval
+copy	intervaltree.py	/^    def copy(self):$/;"	m	class:IntervalTree
+copy	intervaltree.py	/^from copy import copy$/;"	i
+count_nodes	node.py	/^    def count_nodes(self):$/;"	m	class:Node
+deepcopy	intersection_test.py	/^from copy import deepcopy$/;"	i
+depth_score	node.py	/^    def depth_score(self, n, m):$/;"	m	class:Node
+depth_score_helper	node.py	/^    def depth_score_helper(self, d, dopt):$/;"	m	class:Node
+difference	intervaltree.py	/^    def difference(self, other):$/;"	m	class:IntervalTree
+difference_update	intervaltree.py	/^    def difference_update(self, other):$/;"	m	class:IntervalTree
+discard	intervaltree.py	/^    def discard(self, interval):$/;"	m	class:IntervalTree
+discard	node.py	/^    def discard(self, interval):$/;"	m	class:Node
+discardi	intervaltree.py	/^    def discardi(self, begin, end, data=None):$/;"	m	class:IntervalTree
+distance_to	interval.py	/^    def distance_to(self, other):$/;"	m	class:Interval
+drotate	node.py	/^    def drotate(self):$/;"	m	class:Node
+end	intervaltree.py	/^    def end(self):$/;"	m	class:IntervalTree
+extend	intervaltree.py	/^    def extend(self, intervals):$/;"	m	class:IntervalTree
+find_nested	intervaltree.py	/^    def find_nested(self):$/;"	m	class:IntervalTree
+floor	node.py	/^from math import floor, log$/;"	i
+from_interval	node.py	/^    def from_interval(cls, interval):$/;"	m	class:Node
+from_intervals	node.py	/^    def from_intervals(cls, intervals):$/;"	m	class:Node
+from_tuples	intervaltree.py	/^    def from_tuples(cls, tups):$/;"	m	class:IntervalTree
+ge	interval.py	/^    def ge(self, other):$/;"	m	class:Interval
+generate_nodes	intersection_test.py	/^    def generate_nodes(self):$/;"	m	class:Checker
+get_new_s_center	node.py	/^            def get_new_s_center():$/;"	f	function:Node.pop_greatest_child
+gt	interval.py	/^    def gt(self, other):$/;"	m	class:Interval
+heapq	priority_queue.py	/^import heapq$/;"	i
+hit_branch	node.py	/^    def hit_branch(self, interval):$/;"	m	class:Node
+init_from_sorted	node.py	/^    def init_from_sorted(self, intervals):$/;"	m	class:Node
+initialize_interval_trees	intersection_test.py	/^    def initialize_interval_trees(self):$/;"	m	class:Checker
+intersection	intervaltree.py	/^    def intersection(self, other):$/;"	m	class:IntervalTree
+intersection_update	intervaltree.py	/^    def intersection_update(self, other):$/;"	m	class:IntervalTree
+is_empty	intervaltree.py	/^    def is_empty(self):$/;"	m	class:IntervalTree
+is_null	interval.py	/^    def is_null(self):$/;"	m	class:Interval
+items	intervaltree.py	/^    def items(self):$/;"	m	class:IntervalTree
+iter	intervaltree.py	/^    iter = __iter__$/;"	v	class:IntervalTree
+l2	node.py	/^def l2(num):$/;"	f
+le	interval.py	/^    def le(self, other):$/;"	m	class:Interval
+length	interval.py	/^    def length(self):$/;"	m	class:Interval
+log	node.py	/^from math import floor, log$/;"	i
+lt	interval.py	/^    def lt(self, other):$/;"	m	class:Interval
+merge_equals	intervaltree.py	/^    def merge_equals(self, data_reducer=None, data_initializer=None):$/;"	m	class:IntervalTree
+merge_overlaps	intervaltree.py	/^    def merge_overlaps(self, data_reducer=None, data_initializer=None):$/;"	m	class:IntervalTree
+namedtuple	interval.py	/^from collections import namedtuple$/;"	i
+new_series	intervaltree.py	/^        def new_series():$/;"	f	function:IntervalTree.merge_equals
+new_series	intervaltree.py	/^        def new_series():$/;"	f	function:IntervalTree.merge_overlaps
+opt	intersection_test.py	/^    opt = parser.parse_args()$/;"	v	class:Checker
+overlaps	interval.py	/^    def overlaps(self, begin, end=None):$/;"	m	class:Interval
+overlaps	intervaltree.py	/^    def overlaps(self, begin, end=None):$/;"	m	class:IntervalTree
+overlaps_point	intervaltree.py	/^    def overlaps_point(self, p):$/;"	m	class:IntervalTree
+overlaps_range	intervaltree.py	/^    def overlaps_range(self, begin, end):$/;"	m	class:IntervalTree
+parser	intersection_test.py	/^    parser = argparse.ArgumentParser()$/;"	v	class:Checker
+pop	priority_queue.py	/^    def pop(self):$/;"	m	class:PriorityQueue
+pop_greatest_child	node.py	/^    def pop_greatest_child(self):$/;"	m	class:Node
+pprint	intervaltree.py	/^                    from pprint import pprint$/;"	i
+print_structure	intervaltree.py	/^    def print_structure(self, tostring=False):$/;"	m	class:IntervalTree
+print_structure	node.py	/^    def print_structure(self, indent=0, tostring=False):$/;"	m	class:Node
+prune	node.py	/^    def prune(self):$/;"	m	class:Node
+push	priority_queue.py	/^    def push(self, item, priority):$/;"	m	class:PriorityQueue
+range	intervaltree.py	/^    def range(self):$/;"	m	class:IntervalTree
+range_matches	interval.py	/^    def range_matches(self, other):$/;"	m	class:Interval
+read_input	intersection_test.py	/^    def read_input(self, file_name):$/;"	m	class:Checker
+refresh_balance	node.py	/^    def refresh_balance(self):$/;"	m	class:Node
+remove	intervaltree.py	/^    def remove(self, interval):$/;"	m	class:IntervalTree
+remove	node.py	/^    def remove(self, interval):$/;"	m	class:Node
+remove_envelop	intervaltree.py	/^    def remove_envelop(self, begin, end):$/;"	m	class:IntervalTree
+remove_interval_helper	node.py	/^    def remove_interval_helper(self, interval, done, should_raise_error):$/;"	m	class:Node
+remove_overlap	intervaltree.py	/^    def remove_overlap(self, begin, end=None):$/;"	m	class:IntervalTree
+removei	intervaltree.py	/^    def removei(self, begin, end, data=None):$/;"	m	class:IntervalTree
+rotate	node.py	/^    def rotate(self):$/;"	m	class:Node
+s_center_score	intervaltree.py	/^        def s_center_score():$/;"	f	function:IntervalTree.score
+score	intervaltree.py	/^    def score(self, full_report=False):$/;"	m	class:IntervalTree
+search	intervaltree.py	/^    def search(self, begin, end=None, strict=False):$/;"	m	class:IntervalTree
+search_overlap	node.py	/^    def search_overlap(self, point_list):$/;"	m	class:Node
+search_point	node.py	/^    def search_point(self, point, result):$/;"	m	class:Node
+slice	intervaltree.py	/^    def slice(self, point, datafunc=None):$/;"	m	class:IntervalTree
+span	intervaltree.py	/^    def span(self):$/;"	m	class:IntervalTree
+split_overlaps	intervaltree.py	/^    def split_overlaps(self):$/;"	m	class:IntervalTree
+srotate	node.py	/^    def srotate(self):$/;"	m	class:Node
+symmetric_difference	intervaltree.py	/^    def symmetric_difference(self, other):$/;"	m	class:IntervalTree
+symmetric_difference_update	intervaltree.py	/^    def symmetric_difference_update(self, other):$/;"	m	class:IntervalTree
+union	intervaltree.py	/^    def union(self, other):$/;"	m	class:IntervalTree
+update	intervaltree.py	/^    def update(self, intervals):$/;"	m	class:IntervalTree
+verify	intervaltree.py	/^    def verify(self):$/;"	m	class:IntervalTree
+verify	node.py	/^    def verify(self, parents=set()):$/;"	m	class:Node
+warn	intervaltree.py	/^from warnings import warn$/;"	i
+xrange	intervaltree.py	/^    xrange = range$/;"	v

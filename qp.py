@@ -31,11 +31,32 @@ print(A[1,:])   # Row1
 print(A[::-1, ::-1])
 
 
-# Solving linear program
+# Solving a linear program
+#   minimize    2 *x_1 + 1*x_2
+#   subject to  -1*x_1 + 1*x_2 <= 1
+#                1*x_1 + 1*x_2 >= 2
+#                        1*x_2 >= 0
+#                1*x_1 - 2*x_2 <= 4
 A = matrix([[-1.0, -1.0, 0.0, 1.0], [1.0, -1.0, -1.0, -2.0]])
 b = matrix([1.0, -2.0, 0.0, 4.0])
 c = matrix([2.0, 1.0])
 
 sol = solvers.lp(c, A, b)
+print(sol['x'])
+
+
+# Solving a quadratic program
+#   minimize    2*x_1^2 + x_2^2 + x_1*x_2 + x_1 + x_2
+#   subject to  x_1 >= 0
+#               x_2 >= 0
+#               x_1 + x_2 = 1
+Q = 2*matrix([ [2, .5], [.5, 1] ])
+p = matrix([1.0, 1.0])
+G = matrix([[-1.0, 0.0], [0.0, -1.0]])
+h = matrix([0.0, 0.0])
+A = matrix([1.0, 1.0], (1,2))
+b = matrix(1.0)
+
+sol = solvers.qp(Q, p, G, h, A, b)
 
 print(sol['x'])
